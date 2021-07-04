@@ -1,4 +1,4 @@
-import {getEditingDistance} from "./getEditingDistance";
+import { getEditingDistance } from './getEditingDistance';
 
 test.each([
   ['a', 'a', 0],

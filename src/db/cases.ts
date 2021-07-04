@@ -1,8 +1,8 @@
-import {parse} from "@interslavic/steen-utils";
+import { parse } from '@interslavic/steen-utils';
 import { BareRecord } from '../types/BareRecord';
 
 function split(tsv: string): BareRecord[] {
-  return tsv.split('\n').map(line => {
+  return tsv.split('\n').map((line) => {
     const [id, isv, genesis, partOfSpeech] = line.split('\t');
     const isPhrase = partOfSpeech === 'phrase';
 
@@ -17925,8 +17925,8 @@ const data = split(`\
 19475\tžuželka\t\tf.\
 `);
 
-export function getCases(nth: number, outOf: number) {
+export function getCases(nth: number, outOf: number): BareRecord[] {
   return [...data].filter((_item, index) => {
-    return nth === (index % outOf);
+    return nth === index % outOf;
   });
 }

@@ -1,5 +1,5 @@
-import {parse} from '@interslavic/steen-utils';
-import {Multirator} from "./Multirator";
+import { parse } from '@interslavic/steen-utils';
+import { Multirator } from './Multirator';
 import { BareRecord } from '../types/BareRecord';
 
 test('rule pos', () => {
@@ -17,7 +17,7 @@ test('rule pos', () => {
       genesis: '',
       partOfSpeech: '',
       replaceWith: ['бра'],
-    }
+    },
   ]);
 
   const word: BareRecord = {
@@ -25,14 +25,12 @@ test('rule pos', () => {
     isv: parse.synset('brati se', { isPhrase: false }),
     ru: parse.synset('браться', { isPhrase: false }),
     genesis: 'Slavic',
-    partOfSpeech: parse.partOfSpeech('v. intr.pf.')
+    partOfSpeech: parse.partOfSpeech('v. intr.pf.'),
   };
 
   const flavor = multirator.process(word);
   const difference = multirator.getDifference(flavor, word.ru);
 
   expect(difference).toBeCloseTo(0.15, 1);
-  expect(flavor).toEqual([
-    {"appliedRules": ["1", "2"], "value": "братися"},
-  ]);
+  expect(flavor).toEqual([{ appliedRules: ['1', '2'], value: 'братися' }]);
 });

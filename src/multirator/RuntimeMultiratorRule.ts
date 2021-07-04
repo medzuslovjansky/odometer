@@ -1,16 +1,16 @@
-import {MultiratorRule} from "./MultiratorRule";
-import {Replacement} from "./Multirator";
-import {parse} from "@interslavic/steen-utils";
-import constant from "lodash/constant";
-import identity from "lodash/identity";
-import isEmpty from "lodash/isEmpty";
-import isMatch from "lodash/isMatch";
-import pickBy from "lodash/pickBy";
+import { MultiratorRule } from './MultiratorRule';
+import { Replacement } from './Multirator';
+import { parse } from '@interslavic/steen-utils';
+import constant from 'lodash/constant';
+import identity from 'lodash/identity';
+import isEmpty from 'lodash/isEmpty';
+import isMatch from 'lodash/isMatch';
+import pickBy from 'lodash/pickBy';
 import { BareRecord } from '../types/BareRecord';
 
 type Predicate<T> = (arg: T) => boolean;
 
-export class RuntimeMultiratorRule  {
+export class RuntimeMultiratorRule {
   public readonly id: string;
   public readonly match: RegExp;
   public readonly replaceWith: Replacement[];
@@ -26,10 +26,12 @@ export class RuntimeMultiratorRule  {
       this.match ? returnTrue : returnFalse,
       RuntimeMultiratorRule.addPartOfSpeechPredicate(rule.partOfSpeech),
       RuntimeMultiratorRule.addGenesisPredicate(rule.genesis),
-    ]
+    ];
   }
 
-  protected static addGenesisPredicate(pattern?: string): Predicate<BareRecord> {
+  protected static addGenesisPredicate(
+    pattern?: string,
+  ): Predicate<BareRecord> {
     if (!pattern) {
       return returnTrue;
     }
@@ -41,7 +43,9 @@ export class RuntimeMultiratorRule  {
     return createGenesisPredicate(pattern);
   }
 
-  protected static addPartOfSpeechPredicate(pattern: string): Predicate<BareRecord> {
+  protected static addPartOfSpeechPredicate(
+    pattern: string,
+  ): Predicate<BareRecord> {
     if (!pattern || pattern.startsWith('#')) {
       return returnTrue;
     }
@@ -75,8 +79,10 @@ const returnFalse = constant(false);
 
 function mapReplacement(s: Replacement): Replacement {
   switch (s) {
-    case 'NULL': return '';
-    default: return s;
+    case 'NULL':
+      return '';
+    default:
+      return s;
   }
 }
 

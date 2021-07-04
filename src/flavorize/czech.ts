@@ -1,9 +1,12 @@
-import {Multirator} from "../multirator/Multirator";
-import {MultiratorRule} from "../multirator/MultiratorRule";
-import compact from "lodash/compact";
+import { Multirator } from '../multirator/Multirator';
+import { MultiratorRule } from '../multirator/MultiratorRule';
+import compact from 'lodash/compact';
 
 function parse(str: string): Multirator {
-  const rows = str.trim().split('\n').map(s => s.split('\t'));
+  const rows = str
+    .trim()
+    .split('\n')
+    .map((s) => s.split('\t'));
 
   return rows
     .slice(1)
@@ -16,8 +19,8 @@ function parse(str: string): Multirator {
         replaceWith: compact(replaceWith),
       };
     })
-    .filter(r => r.match)
-    .filter(r => !r.partOfSpeech.startsWith('#'))
+    .filter((r) => r.match)
+    .filter((r) => !r.partOfSpeech.startsWith('#'))
     .reduce((acc, raw) => {
       const rule: MultiratorRule = {
         id: raw.id || `R${raw.index + 1}`,
