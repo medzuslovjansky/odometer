@@ -1,0 +1,183 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Czech should be that: 1 - distance 1`] = `"(oko) ∩ (oko) = oko ÷ oko ≈ 0"`;
+
+exports[`Czech should be that: 1 - transforms 1`] = `
+"A: 
+B: "
+`;
+
+exports[`Czech should be that: 2 - distance 1`] = `"(opisati) ∩ (popsat) = opisati ÷ popsat ≈ 0.3333333333333333"`;
+
+exports[`Czech should be that: 2 - transforms 1`] = `
+"A: Ko2
+B: "
+`;
+
+exports[`Czech should be that: 3 - distance 1`] = `"(opera) ∩ (opera) = opera ÷ opera ≈ 0"`;
+
+exports[`Czech should be that: 3 - transforms 1`] = `
+"A: 
+B: "
+`;
+
+exports[`Czech should be that: 4 - distance 1`] = `"(nikto) ∩ (nikdo) = nikto ÷ nikdo ≈ 0.2"`;
+
+exports[`Czech should be that: 4 - transforms 1`] = `
+"A: 
+B: "
+`;
+
+exports[`Czech should be that: 5 - distance 1`] = `"(tęžky) ∩ (těžký, silný, hustý) = tęžky ÷ těžký ≈ 0.2727272727272727"`;
+
+exports[`Czech should be that: 5 - transforms 1`] = `
+"A: A2, B4
+B: "
+`;
+
+exports[`Czech should be that: 6 - distance 1`] = `"(veliky) ∩ (velký) = veliky ÷ velký ≈ 0.18181818181818182"`;
+
+exports[`Czech should be that: 6 - transforms 1`] = `
+"A: A2
+B: "
+`;
+
+exports[`Czech should be that: 7 - distance 1`] = `"(osųđati) ∩ (odsuzovat) = osųđati ÷ odsuzovat ≈ 0.4"`;
+
+exports[`Czech should be that: 7 - transforms 1`] = `
+"A: B14, B3, Ko2
+B: "
+`;
+
+exports[`Czech should be that: 8 - distance 1`] = `"(odinųd) ∩ (odjinud) = odinųd ÷ odjinud ≈ 0.15384615384615385"`;
+
+exports[`Czech should be that: 8 - transforms 1`] = `
+"A: B14
+B: "
+`;
+
+exports[`Czech should be that: 10 - distance 1`] = `"(olovo) ∩ (olovo) = olovo ÷ olovo ≈ 0"`;
+
+exports[`Czech should be that: 10 - transforms 1`] = `
+"A: 
+B: "
+`;
+
+exports[`Czech should be that: 11 - distance 1`] = `"(abdikovati) ∩ (abdikovat) = abdikovati ÷ abdikovat ≈ 0"`;
+
+exports[`Czech should be that: 11 - transforms 1`] = `
+"A: Ko2
+B: "
+`;
+
+exports[`Czech should be that: 12 - distance 1`] = `"(trava) ∩ (tráva) = trava ÷ tráva ≈ 0.1"`;
+
+exports[`Czech should be that: 12 - transforms 1`] = `
+"A: 
+B: "
+`;
+
+exports[`Czech should be that: 13 - distance 1`] = `"(osnovyvati) ∩ (zakládat, ustanovovat, stanovit) = osnovyvati ÷ ustanovovat ≈ 0.4"`;
+
+exports[`Czech should be that: 13 - transforms 1`] = `
+"A: Ko2
+B: "
+`;
+
+exports[`Czech should be that: 14 - distance 1`] = `"(ocěniti) ∩ (ocenit, ohodnotit) = ocěniti ÷ ocenit ≈ 0"`;
+
+exports[`Czech should be that: 14 - transforms 1`] = `
+"A: Dě, Ko2
+B: "
+`;
+
+exports[`Czech should be that: 15 - distance 1`] = `"(absencija) ∩ (absence, nepřítomnost) = absencija ÷ absence ≈ 0"`;
+
+exports[`Czech should be that: 15 - transforms 1`] = `
+"A: I5
+B: "
+`;
+
+exports[`Czech should be that: 16 - distance 1`] = `"(želųdòk) ∩ (žaludek) = želųdòk ÷ žaludek ≈ 0.2857142857142857"`;
+
+exports[`Czech should be that: 16 - transforms 1`] = `
+"A: B14
+B: "
+`;
+
+exports[`Czech should be that: 17 - distance 1`] = `"(råzměniti) ∩ (rozměnit) = råzměniti ÷ rozměnit ≈ 0"`;
+
+exports[`Czech should be that: 17 - transforms 1`] = `
+"A: Ko2, P2
+B: "
+`;
+
+exports[`Czech should be that: 18 - distance 1`] = `"(astronomija) ∩ (astronomie) = astronomija ÷ astronomie ≈ 0"`;
+
+exports[`Czech should be that: 18 - transforms 1`] = `
+"A: I5
+B: "
+`;
+
+exports[`Czech should be that: 20 - distance 1`] = `"(dostavjati) ∩ (poskytovat) = dostavjati ÷ poskytovat ≈ 0.5555555555555556"`;
+
+exports[`Czech should be that: 20 - transforms 1`] = `
+"A: K12, Ko2
+B: "
+`;
+
+exports[`Czech should be that: 22 - distance 1`] = `"(tŀpa) ∩ (dav, zástup, nával, tlačenice) = tŀpa ÷ nával ≈ 0.8888888888888888"`;
+
+exports[`Czech should be that: 22 - transforms 1`] = `
+"A: 
+B: "
+`;
+
+exports[`Czech should be that: 24 - distance 1`] = `"(zapŀnjati) ∩ (vyplňovat) = zapŀnjati ÷ vyplňovat ≈ 0.625"`;
+
+exports[`Czech should be that: 24 - transforms 1`] = `
+"A: D7, Ko2
+B: "
+`;
+
+exports[`Czech should be that: 25 - distance 1`] = `"(zaregistrovati) ∩ (zaregistrovat) = zaregistrovati ÷ zaregistrovat ≈ 0"`;
+
+exports[`Czech should be that: 25 - transforms 1`] = `
+"A: Ko2
+B: "
+`;
+
+exports[`Czech should be that: 26 - distance 1`] = `"(rotacija) ∩ (rotace) = rotacija ÷ rotace ≈ 0"`;
+
+exports[`Czech should be that: 26 - transforms 1`] = `
+"A: I5
+B: "
+`;
+
+exports[`Czech should be that: 27 - distance 1`] = `"(råzličıje) ∩ (rozdíl) = råzličıje ÷ rozdíl ≈ 0.7333333333333333"`;
+
+exports[`Czech should be that: 27 - transforms 1`] = `
+"A: P2
+B: "
+`;
+
+exports[`Czech should be that: 28 - distance 1`] = `"(žiti) ∩ (žít, být živý) = žiti ÷ žít ≈ 0.16666666666666666"`;
+
+exports[`Czech should be that: 28 - transforms 1`] = `
+"A: Ko2
+B: "
+`;
+
+exports[`Czech should be that: 29 - distance 1`] = `"(časovy) ∩ (dočasný) = časovy ÷ dočasný ≈ 0.6153846153846154"`;
+
+exports[`Czech should be that: 29 - transforms 1`] = `
+"A: A2
+B: "
+`;
+
+exports[`Czech should be that: 30 - distance 1`] = `"(krajno) ∩ (krajně, velmi) = krajno ÷ krajně ≈ 0.16666666666666666"`;
+
+exports[`Czech should be that: 30 - transforms 1`] = `
+"A: 
+B: "
+`;
