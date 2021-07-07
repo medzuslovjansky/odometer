@@ -30,10 +30,6 @@ describe('Czech', () => {
       );
 
       if (a && b) {
-        expect(
-          `(${t.isv}) ∩ (${t.translation}) = ${a.root} ÷ ${b.root} ≈ ${distance}`,
-        ).toMatchSnapshot(`${t.id} - distance`);
-
         const chainA = [...a.replacements()]
           .map((r) => rules.Standard.rules.find(r))
           .map((r) => `${r && r.id}`)
@@ -44,9 +40,13 @@ describe('Czech', () => {
           .map((r) => `${r && r.id}`)
           .join(', ');
 
-        expect(`A: ${chainA}\nB: ${chainB}`).toMatchSnapshot(
-          `${t.id} - transforms`,
-        );
+        let report = '';
+        report += `(${t.isv}) ∩ (${t.translation}) = ${a.root} ÷ ${b.root}`;
+        report += `\nISV: ${a.root} → ${a} (${chainA})`;
+        report += `\nCS: ${b.root} → ${b} (${chainB})`;
+        report += `\nΔ(${a}, ${b}) ≈ ${distance}`;
+
+        expect(report).toMatchSnapshot(`${t.id}: ${t.isv}`);
       }
     }
   });
