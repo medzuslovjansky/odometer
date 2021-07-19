@@ -1,4 +1,4 @@
-import { Replacement } from '../rules/Replacement';
+import type { Replacement } from '../multireplacer/Replacement';
 
 export class Intermediate {
   public readonly value: string;

@@ -11,15 +11,14 @@ export class MultireplacerRule implements FlavorizationPredicateObject {
   public searchValue: string | RegExp = '';
   public splitter: keyof typeof Splitters = 'none';
 
-  constructor(public id: string) {}
-
   public appliesTo(intermediate: Intermediate): boolean {
     return !!this.searchValue && this.predicates.appliesTo(intermediate);
   }
 
-  public apply(intermediate: Intermediate): Intermediate[] {
-    const results: Intermediate[] = [];
-
+  public apply(
+    intermediate: Intermediate,
+    results: Intermediate[] = [],
+  ): Intermediate[] {
     for (const variant of this.replacements) {
       const newValue = intermediate.value.replace(
         Splitters[this.splitter],
@@ -32,6 +31,7 @@ export class MultireplacerRule implements FlavorizationPredicateObject {
         ? intermediate
         : results.find((i) => newIntermediate.equals(i)) || newIntermediate;
 
+      // TODO: review the motivation to check for ... !== intermidate
       if (
         newIntermediateDeduped !== newIntermediate &&
         newIntermediateDeduped !== intermediate

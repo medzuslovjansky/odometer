@@ -3,28 +3,19 @@ import { Replacement } from './Replacement';
 
 export class MultireplacerRuleList {
   protected readonly rules: MultireplacerRule[] = [];
-  protected readonly ruleIDs = new Set<string>();
+  protected readonly ruleInstances = new Set<MultireplacerRule>();
 
   [Symbol.iterator]() {
     return this.rules[Symbol.iterator]();
   }
 
   public add(rule: MultireplacerRule): void {
-    this.validateRule(rule);
-    this.ruleIDs.add(rule.id);
+    if (this.ruleInstances.has(rule)) {
+      throw new Error(`Replacement rule (${rule}) has been already added.`);
+    }
+
     this.rules.push(rule);
-  }
-
-  protected validateRule(rule: MultireplacerRule): void {
-    if (!rule.id) {
-      throw new Error(`Replacement rule (${rule}) should have a defined id`);
-    }
-
-    if (this.ruleIDs.has(rule.id)) {
-      throw new Error(
-        `Replacement rule (${rule}) has a non-unique ID = ${rule.id}`,
-      );
-    }
+    this.ruleInstances.add(rule);
   }
 
   public find(value: MultireplacerRule | Replacement | null) {
