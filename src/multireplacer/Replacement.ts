@@ -1,6 +1,10 @@
 import { MultireplacerRule } from './MultireplacerRule';
 
-export type ReplacementFunction = (substring: string, ...args: any[]) => string;
+export type ReplacementFunction = (
+  substring: string,
+  ...args: unknown[]
+) => string;
+
 export type ReplacementValue = string | ReplacementFunction;
 
 export class Replacement<Context> {
@@ -9,7 +13,7 @@ export class Replacement<Context> {
     public readonly value: ReplacementValue,
   ) {}
 
-  [Symbol.toStringTag]() {
+  [Symbol.toStringTag](): string {
     return String(this.value);
   }
 }

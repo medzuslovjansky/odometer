@@ -5,7 +5,7 @@ export class MultireplacerRuleList<Context> {
   protected readonly rules: MultireplacerRule<Context>[] = [];
   protected readonly ruleInstances = new Set<MultireplacerRule<Context>>();
 
-  [Symbol.iterator]() {
+  [Symbol.iterator](): IterableIterator<MultireplacerRule<Context>> {
     return this.rules[Symbol.iterator]();
   }
 
@@ -18,7 +18,9 @@ export class MultireplacerRuleList<Context> {
     this.ruleInstances.add(rule);
   }
 
-  public find(value: MultireplacerRule<Context> | Replacement<Context> | null) {
+  public find(
+    value: MultireplacerRule<Context> | Replacement<Context> | null,
+  ): MultireplacerRule<Context> | null {
     if (value instanceof MultireplacerRule) {
       const index = this.rules.indexOf(value);
       if (index >= 0) {

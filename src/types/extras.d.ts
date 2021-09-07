@@ -1,5 +1,5 @@
 declare module 'string.prototype.replaceall' {
-  type Replacer = (substring: string, ...args: any[]) => string;
+  type Replacer = (substring: string, ...args: unknown[]) => string;
 
   export function implementation(
     this: string,

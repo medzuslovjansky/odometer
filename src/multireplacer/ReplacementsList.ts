@@ -15,7 +15,7 @@ export class ReplacementsList<Context> {
     return this.replacements.indexOf(value);
   }
 
-  [Symbol.iterator]() {
+  [Symbol.iterator](): IterableIterator<Replacement<Context>> {
     return this.replacements[Symbol.iterator]();
   }
 }

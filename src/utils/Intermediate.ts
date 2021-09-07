@@ -22,15 +22,18 @@ export class Intermediate<Context = unknown, Replacement = unknown> {
     }
   }
 
-  toString() {
+  toString(): string {
     return this.value;
   }
 
-  equals(other: Intermediate) {
+  equals(other: Intermediate): boolean {
     return this.value === other.value;
   }
 
-  static cast<Context, Replacement>(value: string, record: Context) {
+  static cast<Context, Replacement>(
+    value: string,
+    record: Context,
+  ): Intermediate<Context, Replacement> {
     return new Intermediate<Context, Replacement>(value, record);
   }
 
