@@ -1,1 +1,3 @@
-export * from './core';
+export * from './multireplacer';
+export * from './odometer';
+export * from './utils';
