@@ -8,7 +8,7 @@ export class Odometer<Context = unknown> {
   public getDifference(
     aSet: Intermediate<Context, Replacement<Context>>[],
     bSet: Intermediate<Context, Replacement<Context>>[],
-  ): OdometerStats<Context> {
+  ): OdometerStats<Context> | null {
     let minimalDistance = Number.POSITIVE_INFINITY;
     let aBest: Intermediate<Context, Replacement<Context>> | null = null;
     let bBest: Intermediate<Context, Replacement<Context>> | null = null;
@@ -27,6 +27,10 @@ export class Odometer<Context = unknown> {
           bBest = bRaw;
         }
       }
+    }
+
+    if (aBest == null || bBest == null) {
+      return null;
     }
 
     return {
