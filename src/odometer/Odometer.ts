@@ -17,12 +17,10 @@ export class Odometer<Context = unknown> {
       const a = aRaw.value.toLowerCase();
       for (const bRaw of bSet) {
         const b = bRaw.value.toLowerCase();
-        const avgLength = 0.5 * (a.length + b.length);
         const distance = getEditingDistance(a, b);
-        const relativeDistance = distance / avgLength;
 
-        if (relativeDistance < minimalDistance) {
-          minimalDistance = relativeDistance;
+        if (distance < minimalDistance) {
+          minimalDistance = distance;
           aBest = aRaw;
           bBest = bRaw;
         }

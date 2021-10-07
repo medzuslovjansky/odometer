@@ -15,7 +15,7 @@ describe('Odometer', () => {
     expect(result).toEqual({
       a: a2,
       b: b1,
-      distance: 0.125,
+      distance: 0.5,
     });
   });
 });
