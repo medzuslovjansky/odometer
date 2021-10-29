@@ -1,8 +1,8 @@
-import { Intermediate } from '../utils';
+import { Intermediate } from './Intermediate';
+import { IntermediatesCache } from './IntermediatesCache';
 import { MultireplacerOutput } from './MultireplacerOutput';
 import { MultireplacerRule } from './MultireplacerRule';
 import { MultireplacerRuleList } from './MultireplacerRuleList';
-import { Replacement } from './Replacement';
 
 export class Multireplacer<Context = unknown> {
   public readonly rules = new MultireplacerRuleList<Context>();
@@ -11,15 +11,16 @@ export class Multireplacer<Context = unknown> {
     values: string[],
     record: Context,
   ): MultireplacerOutput<Context> {
-    let intermediates = values.map((v) => {
-      return Intermediate.cast<Context, Replacement<Context>>(v, record);
-    });
-    let nextIntermediates: Intermediate<Context, Replacement<Context>>[] = [];
+    const intermediatesCache = new IntermediatesCache<Context>();
+
+    let intermediates = values.map((v) => new Intermediate(v, record));
+    let nextIntermediates: Intermediate<Context>[] = [];
     let applied = false;
     let rule: MultireplacerRule<Context>;
-    let value: Intermediate<Context, Replacement<Context>>;
+    let value: Intermediate<Context>;
 
     for (rule of this.rules) {
+      rule.intermediatesCache = intermediatesCache;
       nextIntermediates = [];
       applied = false;
 

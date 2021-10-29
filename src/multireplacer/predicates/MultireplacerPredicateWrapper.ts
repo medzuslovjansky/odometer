@@ -1,9 +1,7 @@
-import { Intermediate } from '../../utils';
-
+import { Intermediate } from '../Intermediate';
 import { MultireplacerPredicateObject } from './MultireplacerPredicateObject';
 import { MultireplacerPredicateFunction } from './MultireplacerPredicateFunction';
 import { MultireplacerPredicate } from './MultireplacerPredicate';
-import { Replacement } from '../Replacement';
 
 export class MultireplacerPredicateWrapper<Context>
   implements MultireplacerPredicateObject<Context>
@@ -19,7 +17,7 @@ export class MultireplacerPredicateWrapper<Context>
         : predicate.appliesTo.bind(predicate);
   }
 
-  appliesTo(value: Intermediate<Context, Replacement<Context>>): boolean {
+  appliesTo(value: Intermediate<Context>): boolean {
     return this.sign === Boolean(this.fn(value));
   }
 }

@@ -1,8 +1,7 @@
+import { Intermediate } from '../Intermediate';
 import { MultireplacerPredicate } from './MultireplacerPredicate';
-import { Intermediate } from '../../utils';
 import { MultireplacerPredicateObject } from './MultireplacerPredicateObject';
 import { MultireplacerPredicateWrapper } from './MultireplacerPredicateWrapper';
-import { Replacement } from '../Replacement';
 
 export class MultireplacerPredicateGroup<Context>
   implements MultireplacerPredicateObject<Context>
@@ -29,9 +28,7 @@ export class MultireplacerPredicateGroup<Context>
     return this;
   }
 
-  appliesTo(
-    intermediate: Intermediate<Context, Replacement<Context>>,
-  ): boolean {
+  appliesTo(intermediate: Intermediate<Context>): boolean {
     let p: MultireplacerPredicateObject<Context>;
     let i: number;
 

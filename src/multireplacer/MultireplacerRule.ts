@@ -1,14 +1,12 @@
 import { implementation as replaceAll } from 'string.prototype.replaceall';
 
-import { Intermediate } from '../utils';
-
 import {
   MultireplacerPredicateGroup,
   MultireplacerPredicateObject,
 } from './predicates';
 import { ReplacementsList } from './ReplacementsList';
-import * as Splitters from './splitters';
-import { Replacement } from './Replacement';
+import { Intermediate } from './Intermediate';
+import { IntermediatesCache } from './IntermediatesCache';
 
 export class MultireplacerRule<Context>
   implements MultireplacerPredicateObject<Context>
@@ -18,48 +16,44 @@ export class MultireplacerRule<Context>
 
   public comment = '';
   public searchValue: string | RegExp = '';
-  public splitter: keyof typeof Splitters = 'none';
+  public splitter: RegExp | null = null;
+
+  public intermediatesCache: IntermediatesCache<Context> | null;
 
   public constructor(comment: string) {
     this.comment = comment;
+    this.intermediatesCache = null;
   }
 
-  public appliesTo(
-    intermediate: Intermediate<Context, Replacement<Context>>,
-  ): boolean {
+  public appliesTo(intermediate: Intermediate<Context>): boolean {
     return !!this.searchValue && this.predicates.appliesTo(intermediate);
   }
 
   public apply(
-    intermediate: Intermediate<Context, Replacement<Context>>,
-    results: Intermediate<Context, Replacement<Context>>[] = [],
-  ): Intermediate<Context, Replacement<Context>>[] {
+    intermediate: Intermediate<Context>,
+    results: Intermediate<Context>[] = [],
+  ): Intermediate<Context>[] {
     for (const variant of this.replacements) {
-      const newValue = intermediate.value.replace(
-        Splitters[this.splitter],
-        (substring) =>
-          replaceAll.call(substring, this.searchValue, variant.value),
-      );
+      const replacerFn = (substring: string) => {
+        return replaceAll.call(substring, this.searchValue, variant.value);
+      };
 
-      const newIntermediate = new Intermediate<Context, Replacement<Context>>(
+      const newValue = this.splitter
+        ? intermediate.value.replace(this.splitter, replacerFn)
+        : replacerFn(intermediate.value);
+
+      let newIntermediate = new Intermediate<Context>(
         newValue,
         intermediate,
         variant,
       );
-      const newIntermediateDeduped = newIntermediate.equals(intermediate)
-        ? intermediate
-        : results.find((i) => newIntermediate.equals(i)) || newIntermediate;
 
-      // TODO: review the motivation to check for ... !== intermidate
-      if (
-        newIntermediateDeduped !== newIntermediate &&
-        newIntermediateDeduped !== intermediate
-      ) {
-        newIntermediateDeduped.deduped.push(newIntermediate);
+      if (this.intermediatesCache) {
+        newIntermediate = this.intermediatesCache.resolve(newIntermediate);
       }
 
-      if (!results.includes(newIntermediateDeduped)) {
-        results.push(newIntermediateDeduped);
+      if (!results.includes(newIntermediate)) {
+        results.push(newIntermediate);
       }
     }
 

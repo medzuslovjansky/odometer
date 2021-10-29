@@ -1,6 +1,5 @@
-import { Intermediate } from '../utils';
-import { Replacement } from './Replacement';
+import { Intermediate } from './Intermediate';
 
 export interface MultireplacerOutput<Context = unknown> {
-  variants: Intermediate<Context, Replacement<Context>>[];
+  variants: Intermediate<Context>[];
 }

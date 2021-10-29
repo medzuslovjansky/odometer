@@ -1,21 +1,47 @@
 import { Odometer } from '../Odometer';
-import { Intermediate } from '../../utils';
-import { Replacement } from '../../multireplacer';
+import { Intermediate } from '../../multireplacer';
 
 describe('Odometer', () => {
-  test('integration', () => {
+  test('integration (simple)', () => {
     const odometer = new Odometer();
 
-    const [a1, a2, b1, b2] = ['morje', 'måre', 'mare', 'miare'].map(
-      (s) => new Intermediate<unknown, Replacement<unknown>>(s, null),
+    const [q1, q2, r1, r2] = ['morje', 'måre', 'miare', 'mare'].map(
+      (s) => new Intermediate(s, null),
     );
 
-    const result = odometer.getDifference([a1, a2], [b1, b2]);
+    const result = odometer.sortByRelevance([q1, q2], [r1, r2]);
 
-    expect(result).toEqual({
-      a: a2,
-      b: b1,
-      distance: 0.5,
-    });
+    expect(result).toEqual([
+      {
+        query: q2,
+        result: r2,
+        editingDistance: 1,
+      },
+      {
+        query: q2,
+        result: r1,
+        editingDistance: 2,
+      },
+    ]);
+  });
+
+  test('integration (dedupe)', () => {
+    const odometer = new Odometer();
+
+    const [q, r] = ['mlåt', 'молот'].map((s) => new Intermediate(s, null));
+    const [q1, q2] = ['mlat', 'molot'].map((s) => new Intermediate(s, q));
+    const [r1, r2, r3] = ['molotok', 'molotoček', 'molot'].map(
+      (s) => new Intermediate(s, r),
+    );
+
+    const result = odometer.sortByRelevance([q1, q2], [r1, r2, r3]);
+
+    expect(result).toEqual([
+      {
+        query: q2,
+        result: r3,
+        editingDistance: 0,
+      },
+    ]);
   });
 });

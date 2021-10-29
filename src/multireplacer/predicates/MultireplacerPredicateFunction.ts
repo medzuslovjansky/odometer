@@ -1,6 +1,5 @@
-import { Intermediate } from '../../utils';
-import { Replacement } from '../Replacement';
+import { Intermediate } from '../Intermediate';
 
 export type MultireplacerPredicateFunction<Context> = (
-  value: Intermediate<Context, Replacement<Context>>,
+  value: Intermediate<Context>,
 ) => boolean;

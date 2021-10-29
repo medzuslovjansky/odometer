@@ -1,3 +1,6 @@
 export * from './multireplacer';
 export * from './odometer';
-export * from './utils';
+export const Splitters = {
+  letter: /\p{L}\p{M}*/gu,
+  word: /\p{L}+/gu,
+};

@@ -1,40 +1,55 @@
-import { Replacement } from '../multireplacer';
-import { Intermediate } from '../utils';
-
+import sortedUniqBy from 'lodash/sortedUniqBy';
 import { getEditingDistance } from './utils/getEditingDistance';
-import { OdometerStats } from './OdometerStats';
+import { Intermediate } from '../multireplacer';
 
 export class Odometer<Context = unknown> {
-  public getDifference(
-    aSet: Intermediate<Context, Replacement<Context>>[],
-    bSet: Intermediate<Context, Replacement<Context>>[],
-  ): OdometerStats<Context> | null {
-    let minimalDistance = Number.POSITIVE_INFINITY;
-    let aBest: Intermediate<Context, Replacement<Context>> | null = null;
-    let bBest: Intermediate<Context, Replacement<Context>> | null = null;
+  public sortByRelevance(
+    searchQueries: Intermediate<Context>[],
+    searchResults: Intermediate<Context>[],
+  ): OdometerComparison<Context>[] {
+    const comparisons = new Map<
+      Intermediate<Context>,
+      OdometerComparison<Context>
+    >();
 
-    for (const aRaw of aSet) {
-      const a = aRaw.value.toLowerCase();
-      for (const bRaw of bSet) {
-        const b = bRaw.value.toLowerCase();
-        const distance = getEditingDistance(a, b);
+    for (const result of searchResults) {
+      let minimalDistance = Number.POSITIVE_INFINITY;
 
+      for (const query of searchQueries) {
+        const distance = getEditingDistance(query.value, result.value);
         if (distance < minimalDistance) {
           minimalDistance = distance;
-          aBest = aRaw;
-          bBest = bRaw;
+          comparisons.set(result, {
+            query,
+            result,
+            editingDistance: minimalDistance,
+          });
         }
       }
     }
 
-    if (aBest == null || bBest == null) {
-      return null;
-    }
+    searchResults.sort((a, b) => {
+      const c1 = comparisons.get(a);
+      const c2 = comparisons.get(b);
+      if (c1 && c2) {
+        return c1.editingDistance - c2.editingDistance;
+      } else if (c1) {
+        return -1;
+      } else if (c2) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
 
-    return {
-      a: aBest,
-      b: bBest,
-      distance: minimalDistance,
-    };
+    return sortedUniqBy(searchResults, (r) => (r.root ?? r).value)
+      .map<OdometerComparison<Context> | undefined>((r) => comparisons.get(r))
+      .filter(Boolean) as Array<OdometerComparison<Context>>;
   }
 }
+
+export type OdometerComparison<Context> = {
+  query: Intermediate<Context>;
+  result: Intermediate<Context>;
+  editingDistance: number;
+};

@@ -13,6 +13,10 @@ export class Replacement<Context> {
     public readonly value: ReplacementValue,
   ) {}
 
+  public get index(): number {
+    return this.owner.replacements.indexOf(this);
+  }
+
   [Symbol.toStringTag](): string {
     return String(this.value);
   }

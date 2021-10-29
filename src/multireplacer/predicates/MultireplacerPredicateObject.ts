@@ -1,6 +1,5 @@
-import { Intermediate } from '../../utils';
-import { Replacement } from '../Replacement';
+import { Intermediate } from '../Intermediate';
 
 export interface MultireplacerPredicateObject<Context> {
-  appliesTo(value: Intermediate<Context, Replacement<Context>>): boolean;
+  appliesTo(value: Intermediate<Context>): boolean;
 }

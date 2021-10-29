@@ -1,22 +1,17 @@
 import {
-  MultireplacerRule,
-  MultireplacerPredicate,
-  Replacement,
+  Intermediate,
   Multireplacer,
+  MultireplacerPredicate,
+  MultireplacerPredicateWrapper,
+  MultireplacerRule,
 } from '..';
-
-import { Intermediate } from '../../utils';
-import { MultireplacerPredicateWrapper } from '..';
 
 type TestContext = {
   isOkay: boolean;
   isBad: boolean;
 };
 
-class TestIntermediate extends Intermediate<
-  TestContext,
-  Replacement<TestContext>
-> {}
+class TestIntermediate extends Intermediate<TestContext> {}
 
 describe('Multireplacer', () => {
   test('predicates', () => {
@@ -49,7 +44,6 @@ describe('Multireplacer', () => {
     });
 
     rule.searchValue = 'oo';
-    rule.splitter = 'none';
     rule.replacements.add('u');
     rule.replacements.add((match) => `${match[0]}^${match.length}`);
 
@@ -94,7 +88,4 @@ describe('Multireplacer', () => {
     expect(otherResult.variants.length).toBe(1);
     expect(otherResult.variants[0].parent).toBe(null);
   });
-  // test('integration', () => {
-  //   const replacer = new Multireplacer<TestContext>();
-  // });
 });

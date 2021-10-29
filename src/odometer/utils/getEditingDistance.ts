@@ -1,23 +1,8 @@
 function difference(a: string, b: string): number {
-  if (a[0] !== b[0]) {
-    return 1;
-  }
-
-  if (a.length !== b.length) {
-    return 0.5;
-  }
-
-  const n = a.length;
-  for (let i = 0; i < n; i++) {
-    if (a[i] !== b[i]) {
-      return 0.5;
-    }
-  }
-
-  return 0;
+  return a === b ? 0 : 1;
 }
 
-function getEditingDistanceForCharSequences(a: string[], b: string[]): number {
+function getEditingDistanceForStrings(a: string, b: string): number {
   if (a.length === 0) {
     return b.length;
   }
@@ -60,29 +45,6 @@ function getEditingDistanceForCharSequences(a: string[], b: string[]): number {
   return matrix[b.length][a.length];
 }
 
-function splitByDiacritics(s: string): string[] {
-  const normalized = s.normalize('NFD');
-  const result: string[] = [];
-  const regex = /\p{Letter}\p{Mark}*/gu;
-  let group: string[] | null;
-  let n = 0;
-
-  while ((group = regex.exec(normalized)) !== null) {
-    const charSequence = group[0];
-    result.push(charSequence);
-    n += charSequence.length;
-  }
-
-  if (n < normalized.length) {
-    result.push(normalized.slice(n));
-  }
-
-  return result;
-}
-
 export function getEditingDistance(a: string, b: string): number {
-  return getEditingDistanceForCharSequences(
-    splitByDiacritics(a),
-    splitByDiacritics(b),
-  );
+  return getEditingDistanceForStrings(a, b);
 }
