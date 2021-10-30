@@ -1,4 +1,4 @@
-import { Replacement } from './index';
+import { Replacement } from './Replacement';
 
 export class Intermediate<ContextClass = unknown> {
   public readonly value: string;
@@ -37,7 +37,7 @@ export class Intermediate<ContextClass = unknown> {
   }
 
   absorb(other: Intermediate<ContextClass>): this {
-    if (this.value !== other.value) {
+    if (this.equals(other)) {
       throw new Error(
         `Cannot merge different intermediates: ${this.value} and ${other.value}`,
       );
@@ -57,15 +57,12 @@ export class Intermediate<ContextClass = unknown> {
     return this;
   }
 
-  *replacements(): IterableIterator<Replacement<ContextClass>> {
+  *chain(): IterableIterator<Intermediate<ContextClass>> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let item: Intermediate<ContextClass> | null = this;
 
     while (item) {
-      if (item.via) {
-        yield item.via;
-      }
-
+      yield item;
       item = item.parent;
     }
   }
