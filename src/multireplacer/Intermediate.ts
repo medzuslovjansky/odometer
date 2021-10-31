@@ -37,7 +37,11 @@ export class Intermediate<ContextClass = unknown> {
   }
 
   absorb(other: Intermediate<ContextClass>): this {
-    if (this.equals(other)) {
+    if (this === other) {
+      return this;
+    }
+
+    if (!this.equals(other)) {
       throw new Error(
         `Cannot merge different intermediates: ${this.value} and ${other.value}`,
       );

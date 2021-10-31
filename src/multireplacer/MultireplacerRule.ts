@@ -42,20 +42,20 @@ export class MultireplacerRule<Context>
         ? intermediate.value.replace(this.splitter, replacerFn)
         : replacerFn(intermediate.value);
 
-      if (newValue !== intermediate.value) {
-        let newIntermediate = new Intermediate<Context>(
-          newValue,
-          intermediate,
-          variant,
-        );
+      let newIntermediate = new Intermediate<Context>(
+        newValue,
+        intermediate,
+        variant,
+      );
 
-        if (this.intermediatesCache) {
-          newIntermediate = this.intermediatesCache.resolve(newIntermediate);
-        }
+      if (newIntermediate.equals(intermediate)) {
+        newIntermediate = intermediate;
+      } else if (this.intermediatesCache) {
+        newIntermediate = this.intermediatesCache.resolve(newIntermediate);
+      }
 
-        if (!results.includes(newIntermediate)) {
-          results.push(newIntermediate);
-        }
+      if (!results.includes(newIntermediate)) {
+        results.push(newIntermediate);
       }
     }
 
