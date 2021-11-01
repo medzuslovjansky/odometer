@@ -1,16 +1,11 @@
 import { implementation as replaceAll } from 'string.prototype.replaceall';
 
-import {
-  MultireplacerPredicateGroup,
-  MultireplacerPredicateObject,
-} from './predicates';
+import { MultireplacerPredicateGroup } from './predicates';
 import { ReplacementsList } from './ReplacementsList';
 import { Intermediate } from './Intermediate';
 import { IntermediatesCache } from './IntermediatesCache';
 
-export class MultireplacerRule<Context>
-  implements MultireplacerPredicateObject<Context>
-{
+export class MultireplacerRule<Context> {
   public readonly predicates = new MultireplacerPredicateGroup<Context>();
   public readonly replacements = new ReplacementsList<Context>(this);
 
@@ -25,14 +20,13 @@ export class MultireplacerRule<Context>
     this.intermediatesCache = null;
   }
 
-  public appliesTo(intermediate: Intermediate<Context>): boolean {
-    return !!this.searchValue && this.predicates.appliesTo(intermediate);
-  }
+  public apply(intermediate: Intermediate<Context>): Intermediate<Context>[] {
+    if (!this._appliesTo(intermediate)) {
+      return [intermediate];
+    }
 
-  public apply(
-    intermediate: Intermediate<Context>,
-    results: Intermediate<Context>[] = [],
-  ): Intermediate<Context>[] {
+    const results: Intermediate<Context>[] = [];
+
     for (const variant of this.replacements) {
       const replacerFn = (substring: string) => {
         return replaceAll.call(substring, this.searchValue, variant.value);
@@ -50,15 +44,19 @@ export class MultireplacerRule<Context>
 
       if (newIntermediate.equals(intermediate)) {
         newIntermediate = intermediate;
-      } else if (this.intermediatesCache) {
-        newIntermediate = this.intermediatesCache.resolve(newIntermediate);
       }
 
-      if (!results.includes(newIntermediate)) {
-        results.push(newIntermediate);
+      if (this.intermediatesCache) {
+        newIntermediate = this.intermediatesCache.add(newIntermediate);
       }
+
+      results.push(newIntermediate);
     }
 
     return results;
+  }
+
+  private _appliesTo(intermediate: Intermediate<Context>): boolean {
+    return !!this.searchValue && this.predicates.appliesTo(intermediate);
   }
 }

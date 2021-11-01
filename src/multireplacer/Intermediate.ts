@@ -6,6 +6,7 @@ export class Intermediate<ContextClass = unknown> {
   public readonly parent: Intermediate<ContextClass> | null;
   public readonly root: Intermediate<ContextClass> | null;
   public readonly via: Replacement<ContextClass> | null;
+  public readonly rank: number;
 
   public dupes: Set<Intermediate<ContextClass>> | null = null;
 
@@ -21,10 +22,12 @@ export class Intermediate<ContextClass = unknown> {
       this.context = parent.context;
       this.parent = parent;
       this.root = parent.root || parent;
+      this.rank = parent.rank + 1;
     } else {
       this.context = parent;
       this.parent = null;
       this.root = null;
+      this.rank = 0;
     }
   }
 
@@ -36,29 +39,32 @@ export class Intermediate<ContextClass = unknown> {
     return this.value === other.value;
   }
 
-  absorb(other: Intermediate<ContextClass>): this {
+  link(other: Intermediate<ContextClass>): void {
     if (this === other) {
-      return this;
+      return;
     }
 
     if (!this.equals(other)) {
       throw new Error(
-        `Cannot merge different intermediates: ${this.value} and ${other.value}`,
+        `Cannot link different intermediates: ${this.value} and ${other.value}`,
       );
     }
 
-    if (other.dupes !== null) {
-      throw new Error(
-        `Cannot merge intermediates with existing duplicates sets: ${other.value}`,
-      );
+    if (this.dupes && other.dupes) {
+      if (this.dupes !== other.dupes) {
+        throw new Error(
+          `Cannot link intermediates with diverged duplicates sets: ${other.value}`,
+        );
+      }
+    } else if (this.dupes) {
+      other.dupes = this.dupes.add(other);
+    } else if (other.dupes) {
+      this.dupes = other.dupes.add(this);
+    } else {
+      this.dupes = other.dupes = new Set<Intermediate<ContextClass>>()
+        .add(this)
+        .add(other);
     }
-
-    if (!this.dupes) {
-      this.dupes = new Set<Intermediate<ContextClass>>().add(this);
-    }
-
-    this.dupes.add(other);
-    return this;
   }
 
   *chain(): IterableIterator<Intermediate<ContextClass>> {
@@ -69,5 +75,13 @@ export class Intermediate<ContextClass = unknown> {
       yield item;
       item = item.parent;
     }
+  }
+
+  static rankSorter<T>(a: Intermediate<T>, b: Intermediate<T>): number {
+    return a.rank - b.rank;
+  }
+
+  static identity<T>(instance: Intermediate<T>): unknown {
+    return instance.value;
   }
 }

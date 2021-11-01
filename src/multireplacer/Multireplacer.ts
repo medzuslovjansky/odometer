@@ -1,3 +1,4 @@
+import sortedUniqBy from 'lodash/sortedUniqBy';
 import { Intermediate } from './Intermediate';
 import { IntermediatesCache } from './IntermediatesCache';
 import { MultireplacerOutput } from './MultireplacerOutput';
@@ -11,31 +12,25 @@ export class Multireplacer<Context = unknown> {
     values: string[],
     record: Context,
   ): MultireplacerOutput<Context> {
-    const intermediatesCache = new IntermediatesCache<Context>();
-
-    let intermediates = values.map((v) => {
-      return intermediatesCache.resolve(new Intermediate(v, record));
-    });
+    let intermediates = values.map((v) => new Intermediate(v, record));
     let nextIntermediates: Intermediate<Context>[] = [];
     let rule: MultireplacerRule<Context>;
     let value: Intermediate<Context>;
+    const intermediatesCache = new IntermediatesCache(intermediates);
 
     for (rule of this.rules) {
-      rule.intermediatesCache = intermediatesCache;
-
       nextIntermediates = [];
 
+      rule.intermediatesCache = intermediatesCache;
       for (value of intermediates) {
-        if (rule.appliesTo(value)) {
-          rule.apply(value, nextIntermediates);
-        }
+        nextIntermediates.push(...rule.apply(value));
       }
-
-      if (nextIntermediates.length > 0) {
-        intermediates = nextIntermediates;
-      }
-
       rule.intermediatesCache = null;
+
+      intermediates = sortedUniqBy(
+        nextIntermediates.sort(Intermediate.rankSorter),
+        Intermediate.identity,
+      );
     }
 
     return { variants: intermediates };

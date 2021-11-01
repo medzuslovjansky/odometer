@@ -45,6 +45,7 @@ describe('Multireplacer', () => {
 
     rule.searchValue = 'oo';
     rule.replacements.add('u');
+    rule.replacements.add('oo');
     rule.replacements.add((match) => `${match[0]}^${match.length}`);
 
     const replacementObjects = [...rule.replacements];
@@ -52,17 +53,19 @@ describe('Multireplacer', () => {
       expect(obj.owner).toBe(rule);
     }
 
-    const results = rule.apply(intermediate);
-    for (const r of results) {
-      expect(r.parent).toBe(intermediate);
-      expect(r.context).toBe(intermediate.context);
-    }
+    const [r1, r2, r3] = rule.apply(intermediate);
 
-    expect(results[0].via).toBe(replacementObjects[0]);
-    expect(results[0].value).toBe('gud');
+    expect(r1.parent).toBe(intermediate);
+    expect(r1.context).toBe(intermediate.context);
+    expect(r1.via).toBe(replacementObjects[0]);
+    expect(r1.value).toBe('gud');
 
-    expect(results[1].via).toBe(replacementObjects[1]);
-    expect(results[1].value).toBe('go^2d');
+    expect(r2).toBe(intermediate);
+
+    expect(r3.parent).toBe(intermediate);
+    expect(r3.context).toBe(intermediate.context);
+    expect(r3.via).toBe(replacementObjects[2]);
+    expect(r3.value).toBe('go^2d');
 
     const multireplacer = new Multireplacer<TestContext>();
     multireplacer.rules.add(rule);
@@ -72,12 +75,12 @@ describe('Multireplacer', () => {
       intermediate.context,
     );
 
-    expect(multiresult.variants).toEqual(results);
+    expect(multiresult.variants).toEqual([r1, r2, r3]);
 
     expect(() => multireplacer.rules.add(rule)).toThrowError(/already added/);
     expect(multireplacer.rules.find(rule)).toBe(rule);
-    expect(multireplacer.rules.find(results[0].via)).toBe(rule);
-    expect(multireplacer.rules.find(results[1].via)).toBe(rule);
+    expect(multireplacer.rules.find(r1.via)).toBe(rule);
+    expect(multireplacer.rules.find(r3.via)).toBe(rule);
     expect(multireplacer.rules.find(null)).toBe(null);
 
     const otherResult = multireplacer.process(['bad'], {
