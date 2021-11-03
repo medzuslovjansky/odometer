@@ -1,43 +1,33 @@
+import sortedUniqBy from 'lodash/sortedUniqBy';
+import { IntermediatesCache, RuleList } from './internal';
 import { Intermediate } from './Intermediate';
-import { IntermediatesCache } from './IntermediatesCache';
-import { MultireplacerOutput } from './MultireplacerOutput';
-import { MultireplacerRule } from './MultireplacerRule';
-import { MultireplacerRuleList } from './MultireplacerRuleList';
+import { Rule } from './Rule';
 
 export class Multireplacer<Context = unknown> {
-  public readonly rules = new MultireplacerRuleList<Context>();
+  public readonly rules = new RuleList<Context>();
 
-  public process(
-    values: string[],
-    record: Context,
-  ): MultireplacerOutput<Context> {
-    const intermediatesCache = new IntermediatesCache<Context>();
-
-    let intermediates = values.map((v) => {
-      return intermediatesCache.resolve(new Intermediate(v, record));
-    });
+  public process(values: string[], context: Context): Intermediate<Context>[] {
+    let intermediates = values.map((v) => new Intermediate(v, context));
     let nextIntermediates: Intermediate<Context>[] = [];
-    let rule: MultireplacerRule<Context>;
+    let rule: Rule<Context>;
     let value: Intermediate<Context>;
+    const intermediatesCache = new IntermediatesCache(intermediates);
 
     for (rule of this.rules) {
-      rule.intermediatesCache = intermediatesCache;
-
       nextIntermediates = [];
 
+      rule.useCache(intermediatesCache);
       for (value of intermediates) {
-        if (rule.appliesTo(value)) {
-          rule.apply(value, nextIntermediates);
-        }
+        nextIntermediates.push(...rule.apply(value));
       }
+      rule.useCache(null);
 
-      if (nextIntermediates.length > 0) {
-        intermediates = nextIntermediates;
-      }
-
-      rule.intermediatesCache = null;
+      intermediates = sortedUniqBy(
+        nextIntermediates.sort(Intermediate.rankSorter),
+        Intermediate.identity,
+      );
     }
 
-    return { variants: intermediates };
+    return intermediates;
   }
 }

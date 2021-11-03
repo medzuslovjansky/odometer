@@ -1,20 +1,13 @@
-import { MultireplacerRule } from './MultireplacerRule';
+import { Rule } from './Rule';
 
-export type ReplacementFunction = (
-  substring: string,
-  ...args: unknown[]
-) => string;
-
-export type ReplacementValue = string | ReplacementFunction;
-
-export class Replacement<Context> {
+export class Replacement<Value = unknown, Context = unknown> {
   constructor(
-    public readonly owner: MultireplacerRule<Context>,
-    public readonly value: ReplacementValue,
+    public readonly owner: Rule<Context>,
+    public readonly value: Value,
   ) {}
 
   public get index(): number {
-    return this.owner.replacements.indexOf(this);
+    return this.owner.indexOf(this);
   }
 
   [Symbol.toStringTag](): string {
