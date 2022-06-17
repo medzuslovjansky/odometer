@@ -1,25 +1,45 @@
-import sortedUniqBy from 'lodash/sortedUniqBy';
 import { getEditingDistance } from './utils/getEditingDistance';
 import { Intermediate } from '../multireplacer';
+import { uniqBy } from 'lodash';
+
+export type OdometerOptions = {
+  ignoreCase: boolean;
+  ignoreNonLetters: boolean;
+};
+
+export type OdometerComparison<Context> = {
+  query: Intermediate<Context>;
+  result: Intermediate<Context>;
+  editingDistance: number;
+};
 
 export class Odometer<Context = unknown> {
+  constructor(
+    public readonly options: OdometerOptions = {
+      ignoreCase: false,
+      ignoreNonLetters: false,
+    },
+  ) {}
+
   public sortByRelevance(
     searchQueries: Intermediate<Context>[],
     searchResults: Intermediate<Context>[],
   ): OdometerComparison<Context>[] {
-    const comparisons = new Map<
+    const closestMatches = new Map<
       Intermediate<Context>,
       OdometerComparison<Context>
     >();
 
     for (const result of searchResults) {
       let minimalDistance = Number.POSITIVE_INFINITY;
+      const resultValue = this.normalize(result);
 
       for (const query of searchQueries) {
-        const distance = getEditingDistance(query.value, result.value);
+        const queryValue = this.normalize(query);
+        const distance = getEditingDistance(queryValue, resultValue);
         if (distance < minimalDistance) {
           minimalDistance = distance;
-          comparisons.set(result, {
+          closestMatches.set(result, {
             query,
             result,
             editingDistance: minimalDistance,
@@ -29,8 +49,8 @@ export class Odometer<Context = unknown> {
     }
 
     searchResults.sort((a, b) => {
-      const c1 = comparisons.get(a);
-      const c2 = comparisons.get(b);
+      const c1 = closestMatches.get(a);
+      const c2 = closestMatches.get(b);
       if (c1 && c2) {
         return c1.editingDistance - c2.editingDistance;
       } else if (c1) {
@@ -42,14 +62,24 @@ export class Odometer<Context = unknown> {
       }
     });
 
-    return sortedUniqBy(searchResults, (r) => (r.root ?? r).value)
-      .map<OdometerComparison<Context> | undefined>((r) => comparisons.get(r))
+    return uniqBy(searchResults, (r) => (r.root ?? r).value)
+      .map<OdometerComparison<Context> | undefined>((r) =>
+        closestMatches.get(r),
+      )
       .filter(Boolean) as Array<OdometerComparison<Context>>;
   }
-}
 
-export type OdometerComparison<Context> = {
-  query: Intermediate<Context>;
-  result: Intermediate<Context>;
-  editingDistance: number;
-};
+  protected normalize(intermediate: Intermediate<unknown>): string {
+    let value = intermediate.value;
+
+    if (this.options.ignoreNonLetters) {
+      value = value.replace(/[^\p{Letter}]/gu, '');
+    }
+
+    if (this.options.ignoreCase) {
+      value = value.toLowerCase();
+    }
+
+    return value;
+  }
+}

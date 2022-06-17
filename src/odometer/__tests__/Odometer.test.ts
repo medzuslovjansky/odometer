@@ -26,21 +26,31 @@ describe('Odometer', () => {
   });
 
   test('integration (dedupe)', () => {
-    const odometer = new Odometer();
+    const odometer = new Odometer({
+      ignoreCase: true,
+      ignoreNonLetters: true,
+    });
 
-    const [q, r] = ['mlåt', 'молот'].map((s) => new Intermediate(s, null));
-    const [q1, q2] = ['mlat', 'molot'].map((s) => new Intermediate(s, q));
-    const [r1, r2, r3] = ['molotok', 'molotoček', 'molot'].map(
-      (s) => new Intermediate(s, r),
+    const [Q, ...R] = ['rybomlåt', 'риба-молот', 'СТРАШНА РИБА'].map(
+      (s) => new Intermediate(s, null),
     );
 
-    const result = odometer.sortByRelevance([q1, q2], [r1, r2, r3]);
+    const [q1, q2] = ['рибомлат', 'рибомолот'].map(
+      (s) => new Intermediate(s, Q),
+    );
+
+    const result = odometer.sortByRelevance([q1, q2], R);
 
     expect(result).toEqual([
       {
         query: q2,
-        result: r3,
-        editingDistance: 0,
+        result: R[0],
+        editingDistance: 1,
+      },
+      {
+        query: q1,
+        result: R[1],
+        editingDistance: 10,
       },
     ]);
   });
