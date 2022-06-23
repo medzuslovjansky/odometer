@@ -62,10 +62,9 @@ describe('Multireplacer', () => {
   }
 
   test('regexpRule', () => {
-    const rule = regexpRule('1', /oo/y, [
-      'u',
-      'oo',
-      (match: string) => `${match[0]}^${match.length}`,
+    const rule = regexpRule('1', /[aeiovuy]+/, [
+      '',
+      (match: string) => `${match}^${match.length}`,
     ]);
 
     expect(rule.name).toBe('1');
@@ -75,7 +74,7 @@ describe('Multireplacer', () => {
       .or((x) => x.context?.isBad)
       .not();
 
-    const intermediate = new TestIntermediate('good', {
+    const intermediate = new TestIntermediate('zovati', {
       isOkay: true,
       isBad: false,
     });
@@ -85,22 +84,27 @@ describe('Multireplacer', () => {
       expect(obj.owner).toBe(rule);
     }
 
-    const [r1, r2, r3] = rule.apply(intermediate);
+    const [r1, r2, r3, r4] = rule.apply(intermediate);
 
-    expect(r1.parent).toBe(intermediate);
+    expect(r1.parent?.parent).toBe(intermediate);
     expect(r1.context).toBe(intermediate.context);
     expect(r1.via).toBe(replacementObjects[0]);
-    expect(r1.value).toBe('gud');
+    expect(r1.value).toBe('zt');
 
-    expect(r2.parent).toBe(intermediate);
+    expect(r2.parent?.parent).toBe(intermediate);
     expect(r2.context).toBe(intermediate.context);
     expect(r2.via).toBe(replacementObjects[1]);
-    expect(r2.value).toBe('good');
+    expect(r2.value).toBe('zti^1');
 
-    expect(r3.parent).toBe(intermediate);
+    expect(r3.parent?.parent).toBe(intermediate);
     expect(r3.context).toBe(intermediate.context);
-    expect(r3.via).toBe(replacementObjects[2]);
-    expect(r3.value).toBe('go^2d');
+    expect(r3.via).toBe(replacementObjects[0]);
+    expect(r3.value).toBe('zova^3t');
+
+    expect(r4.parent?.parent).toBe(intermediate);
+    expect(r4.context).toBe(intermediate.context);
+    expect(r4.via).toBe(replacementObjects[1]);
+    expect(r4.value).toBe('zova^3ti^1');
 
     const multireplacer = new Multireplacer<TestContext>();
     multireplacer.rules.add(rule);
@@ -110,13 +114,16 @@ describe('Multireplacer', () => {
       intermediate.context,
     );
 
-    expect([r1, r2, r3].every((r, i) => r.equals(variants[i]))).toBeTruthy();
+    expect(
+      [r1, r2, r3, r4].every((r, i) => r.equals(variants[i])),
+    ).toBeTruthy();
 
     expect(() => multireplacer.rules.add(rule)).toThrowError(/already added/);
     expect(multireplacer.rules.find(rule)).toBe(rule);
     expect(multireplacer.rules.find(r1.via)).toBe(rule);
     expect(multireplacer.rules.find(r2.via)).toBe(rule);
     expect(multireplacer.rules.find(r3.via)).toBe(rule);
+    expect(multireplacer.rules.find(r4.via)).toBe(rule);
     expect(multireplacer.rules.find(null)).toBe(null);
 
     const otherVariants = multireplacer.process(['bad'], {
@@ -135,18 +142,19 @@ describe('Multireplacer', () => {
         č: 'cz',
         š: 'sz',
         ŕ: 'rz',
-        ž: 'ż',
+        ě: 'ie',
+        v: 'w',
       },
       true,
     );
 
-    const word = new TestIntermediate('Gŕegoŕ Ščebžežkevič', {
+    const word = new TestIntermediate('Gŕegoŕ Bŕęčyščykěvič', {
       isOkay: true,
       isBad: false,
     });
 
     const [polish] = rule.apply(word);
-    expect(polish.value).toBe('Grzegorz Szczebżeżkevicz');
+    expect(polish.value).toBe('Grzegorz Brzęczyszczykiewicz');
   });
 
   test('fnRule', () => {

@@ -10,8 +10,8 @@ export class RegExpExecutor<T> implements Executor<T> {
     protected readonly replacements: Replacement<ReplacementValue, T>[],
   ) {}
 
-  protected readonly sticky = new RegExp(this.regexp, 'y');
-  protected readonly global = new RegExp(this.regexp, 'g');
+  protected readonly sticky = this._cloneRegexp('y');
+  protected readonly global = this._cloneRegexp('g');
 
   execute(origin: Intermediate<T>): Intermediate<T>[] {
     const lastIndices = new Map<Intermediate, number>();
@@ -22,7 +22,9 @@ export class RegExpExecutor<T> implements Executor<T> {
     while ((intermediate = queue.shift())) {
       this.global.lastIndex = lastIndices.get(intermediate) || 0;
 
-      const match = this.global.exec(intermediate.value);
+      const intermediateValue = intermediate.value;
+      const intermediateValueLength = intermediateValue.length;
+      const match = this.global.exec(intermediateValue);
       if (!match) {
         results.push(intermediate);
         continue;
@@ -30,21 +32,21 @@ export class RegExpExecutor<T> implements Executor<T> {
 
       for (const replacement of this.replacements) {
         this.sticky.lastIndex = match.index;
-        const newValue = intermediate.value.replace(
+        const newValue = intermediateValue.replace(
           this.sticky,
           replacement.value as any,
         );
-        if (newValue.length > 1000) {
-          this._throwSafeguardError();
-        }
-
+        const newValueLength = newValue.length;
         const newIntermediate = new Intermediate(
           newValue,
           intermediate,
           replacement,
         );
 
-        lastIndices.set(newIntermediate, this.sticky.lastIndex);
+        lastIndices.set(
+          newIntermediate,
+          this.sticky.lastIndex + newValueLength - intermediateValueLength,
+        );
         queue.push(newIntermediate);
       }
 
@@ -63,6 +65,15 @@ export class RegExpExecutor<T> implements Executor<T> {
   _throwSafeguardError(): never {
     throw new Error(
       'High chance of infinite loop detected in the rule: ' + this.regexp,
+    );
+  }
+
+  private _cloneRegexp(extraFlags: string) {
+    const withoutGY = this.regexp.flags.replace('g', '').replace('y', '');
+
+    return new RegExp(
+      this.regexp,
+      [...new Set([...withoutGY, ...extraFlags])].join(''),
     );
   }
 }

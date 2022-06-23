@@ -31,11 +31,11 @@ export class Rule<Context> {
     return [...this._ownedReplacements.values()];
   }
 
-  public useCache(cache: IntermediatesCache<Context> | null) {
+  public useCache(cache: IntermediatesCache<Context> | null): void {
     this._intermediatesCache = cache;
   }
 
-  public indexOf(replacement: Replacement<unknown, Context>) {
+  public indexOf(replacement: Replacement<unknown, Context>): number {
     if (!this.executor) {
       this._throwMissingExecutor();
     }
